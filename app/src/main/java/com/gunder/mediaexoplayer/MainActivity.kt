@@ -4,9 +4,28 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.util.Util
 import com.gunder.mediaexoplayer.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+    private var player: ExoPlayer? = null
+    private fun initializePlayer() {
+        val mediaItem = MediaItem.fromUri(VIDEO_URL)
+        val anotherMediaItem = MediaItem.fromUri(URL_AUDIO)
+
+        player = ExoPlayer.Builder(this).build().also { exoPlayer ->
+            viewBinding.videView.player = exoPlayer
+            exoPlayer.setMediaItem(mediaItem)
+            exoPlayer.addMediaItem(anotherMediaItem)
+            exoPlayer.prepare()
+        }
+    }
+
+    private fun releasePlayer() {
+        player?.release()
+        player = null
+    }
+
     private val viewBinding by lazy(LazyThreadSafetyMode.NONE) {
         ActivityMainBinding.inflate(layoutInflater)
     }
@@ -29,5 +48,33 @@ class MainActivity : AppCompatActivity() {
         val anotherMediaItem = MediaItem.fromUri(URL_AUDIO)
         player.setMediaItem(mediaItem)
         player.addMediaItem(anotherMediaItem)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (Util.SDK_INT > 23) {
+            initializePlayer()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (Util.SDK_INT > 23) {
+            initializePlayer()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (Util.SDK_INT > 23) {
+            releasePlayer()
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (Util.SDK_INT > 23) {
+            releasePlayer()
+        }
     }
 }
