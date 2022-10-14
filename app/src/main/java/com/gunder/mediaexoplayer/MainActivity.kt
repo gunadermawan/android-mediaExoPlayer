@@ -14,6 +14,8 @@ class MainActivity : AppCompatActivity() {
     companion object {
         const val VIDEO_URL =
             "https://github.com/dicodingacademy/assets/releases/download/release-video/VideoDicoding.mp4"
+        const val URL_AUDIO =
+            "https://github.com/dicodingacademy/assets/raw/main/android_intermediate_academy/bensound_ukulele.mp3"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,9 +26,8 @@ class MainActivity : AppCompatActivity() {
         viewBinding.videView.player = player
 
         val mediaItem = MediaItem.fromUri(VIDEO_URL)
+        val anotherMediaItem = MediaItem.fromUri(URL_AUDIO)
         player.setMediaItem(mediaItem)
-        player.prepare()
+        player.addMediaItem(anotherMediaItem)
     }
-
-
 }
